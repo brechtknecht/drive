@@ -2,55 +2,32 @@
 
 A terminal utility to bookmark and quickly navigate to frequently used directories.
 
+**Note**: The npm package is called `@brechtknecht/drive` (install with `npm install -g @brechtknecht/drive`), but the command you use is just `drive`.
+
 ## Features
 
-- **Park directories**: Bookmark any directory with a simple command
-- **Interactive TUI**: Navigate through your bookmarked directories with an intuitive keyboard-driven interface
-- **Quick navigation**: Jump to bookmarked directories instantly
-- **Editor integration**: Open bookmarked directories in your favorite editor
-- **Persistent storage**: Your bookmarks are saved in `~/.config/drive/paths.json`
+- **Bookmark & Select**: Park frequently-used directories with `drive park`, then navigate via interactive TUI with keyboard shortcuts (↑/↓ to browse, Enter to select, `d` to delete, Esc to cancel)
+- **Flexible Actions**: Jump to directories (`drive`), execute commands in them (`drive npm test`), open in editor (`drive -e`), or quickly go home (`drive home`) - all from one selector interface
+- **Persistent & Reliable**: Bookmarks stored in `~/.config/drive/paths.json`, automatically filters invalid paths, works via shell wrapper for seamless directory changing
 
 ## Installation
 
-### Prerequisites
+Install globally via npm:
 
-- Node.js 20+ (recommended, but may work with Node.js 18+)
+```bash
+npm install -g @brechtknecht/drive
+```
 
-### Install
+**Important**: After installation, you'll see instructions to add a shell wrapper to your `~/.bashrc` or `~/.zshrc`. This is required for the `cd` functionality to work. Copy the `source` line shown in the postinstall output and add it to your shell config, then reload your shell.
 
-1. Clone or download this repository
-2. Navigate to the drive directory:
-   ```bash
-   cd /path/to/drive
-   ```
+Example for zsh:
+```bash
+# Add to ~/.zshrc:
+source /path/to/global/node_modules/@brechtknecht/drive/drive.sh
 
-3. Install dependencies and build:
-   ```bash
-   npm install
-   npm run build
-   ```
-
-4. Link the CLI globally:
-   ```bash
-   npm link
-   ```
-
-5. **Important**: Add the shell wrapper to your shell config:
-
-   For **bash**, add to `~/.bashrc`:
-   ```bash
-   source /Users/felixtesche/Downloads/Documents/github.nosync/drive/drive.sh
-   ```
-
-   For **zsh**, add to `~/.zshrc`:
-   ```bash
-   source /Users/felixtesche/Downloads/Documents/github.nosync/drive/drive.sh
-   ```
-
-6. Reload your shell or run:
-   ```bash
-   source ~/.bashrc  # or source ~/.zshrc
-   ```
+# Then reload:
+source ~/.zshrc
+```
 
 ## Usage
 
@@ -103,6 +80,37 @@ drive --editor
 drive -e
 ```
 
+### Execute commands in selected directories
+Run any command in a directory you select from your bookmarks:
+```bash
+drive <command>
+```
+
+**Examples:**
+```bash
+# Launch claude in a selected project
+drive claude
+
+# Install dependencies in a selected project
+drive npm install
+
+# Run tests in a selected project
+drive npm test
+
+# Open VS Code in a selected directory
+drive code .
+
+# Complex commands work too
+drive npm install && npm start
+```
+
+**How it works:**
+1. Shows the directory selector
+2. After you select a directory, it changes to that directory
+3. Then executes your command in that directory
+
+This is perfect for quickly running commands in your frequently used projects without navigating there first.
+
 ## How it works
 
 The `drive` command uses a shell wrapper function to enable directory changing. When you select a directory:
@@ -130,9 +138,9 @@ The config file is a simple JSON array of absolute paths:
 ## Uninstall
 
 1. Remove the source line from your shell config (`~/.bashrc` or `~/.zshrc`)
-2. Unlink the CLI:
+2. Uninstall the package:
    ```bash
-   npm unlink -g drive-cli
+   npm uninstall -g @brechtknecht/drive
    ```
 3. Optionally, remove your bookmarks:
    ```bash
@@ -159,4 +167,4 @@ npm run build
 
 ## License
 
-ISC
+MIT

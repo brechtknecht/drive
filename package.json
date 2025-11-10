@@ -1,5 +1,5 @@
 {
-  "name": "drive-cli",
+  "name": "@brechtknecht/drive",
   "version": "1.0.0",
   "description": "A terminal utility to bookmark and quickly navigate to frequently used directories",
   "type": "module",
@@ -7,20 +7,37 @@
   "bin": {
     "drive": "./dist/index.js"
   },
+  "files": [
+    "dist",
+    "drive.sh",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/index.ts",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "postinstall": "node dist/postinstall.js"
   },
   "keywords": [
     "cli",
     "navigation",
     "directory",
     "bookmark",
-    "terminal"
+    "terminal",
+    "drive",
+    "cd",
+    "filesystem"
   ],
-  "author": "",
-  "license": "ISC",
+  "author": "Felix Tesche",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brechtknecht/drive.git"
+  },
+  "homepage": "https://github.com/brechtknecht/drive#readme",
+  "bugs": {
+    "url": "https://github.com/brechtknecht/drive/issues"
+  },
   "devDependencies": {
     "@types/node": "^24.10.0",
     "tsx": "^4.20.6",

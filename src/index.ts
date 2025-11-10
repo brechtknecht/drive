@@ -116,11 +116,22 @@ program
       }
 
       try {
+        // Check if a command will be executed after selection
+        const commandToRun = process.env.DRIVE_COMMAND;
+
+        // Build message based on whether a command is provided
+        let message = 'Select a directory:';
+        if (commandToRun) {
+          message = `Select a directory to run \x1b[36m${commandToRun}\x1b[0m in:`;
+        } else if (options.editor) {
+          message = 'Select a directory to open in editor:';
+        }
+
         // Create custom select prompt with key handlers
         const SelectPrompt = (Enquirer as any).Select;
         const prompt = new SelectPrompt({
           name: 'path',
-          message: 'Select a directory:',
+          message: message,
           choices: paths.map(p => ({
             name: p,
             message: p,
@@ -130,6 +141,9 @@ program
 
         // Add footer with keyboard shortcuts
         prompt.footer = () => {
+          if (commandToRun) {
+            return '\n  ↑/↓ Navigate • Enter Select & Run • d Delete • Esc Cancel';
+          }
           return '\n  ↑/↓ Navigate • Enter Select • d Delete • Esc Cancel';
         };
 

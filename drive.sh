@@ -21,14 +21,16 @@ drive() {
     local command_to_run="$@"
     local tmpfile="/tmp/drive-output-$$"
 
-    # Set env var so CLI knows where to write
+    # Set env vars so CLI knows where to write and what command will run
     export DRIVE_OUTPUT_FILE="$tmpfile"
+    export DRIVE_COMMAND="$command_to_run"
 
     # Run selector - CLI will write output to temp file
     command drive
     local exit_code=$?
 
     unset DRIVE_OUTPUT_FILE
+    unset DRIVE_COMMAND
 
     # Read the output from temp file
     local output=""

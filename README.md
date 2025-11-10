@@ -7,6 +7,7 @@ A terminal utility to bookmark and quickly navigate to frequently used directori
 - **Park directories**: Bookmark any directory with a simple command
 - **Interactive TUI**: Navigate through your bookmarked directories with an intuitive keyboard-driven interface
 - **Quick navigation**: Jump to bookmarked directories instantly
+- **Command execution**: Run any command in a selected directory
 - **Editor integration**: Open bookmarked directories in your favorite editor
 - **Persistent storage**: Your bookmarks are saved in `~/.config/drive/paths.json`
 
@@ -102,6 +103,37 @@ drive --editor
 # or
 drive -e
 ```
+
+### Execute commands in selected directories
+Run any command in a directory you select from your bookmarks:
+```bash
+drive <command>
+```
+
+**Examples:**
+```bash
+# Launch claude in a selected project
+drive claude
+
+# Install dependencies in a selected project
+drive npm install
+
+# Run tests in a selected project
+drive npm test
+
+# Open VS Code in a selected directory
+drive code .
+
+# Complex commands work too
+drive npm install && npm start
+```
+
+**How it works:**
+1. Shows the directory selector
+2. After you select a directory, it changes to that directory
+3. Then executes your command in that directory
+
+This is perfect for quickly running commands in your frequently used projects without navigating there first.
 
 ## How it works
 

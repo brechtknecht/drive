@@ -2,6 +2,8 @@
 
 A terminal utility to bookmark and quickly navigate to frequently used directories.
 
+**Note**: The npm package is called `@brechtknecht/drive` (install with `npm install -g @brechtknecht/drive`), but the command you use is just `drive`.
+
 ## Features
 
 - **Bookmark & Select**: Park frequently-used directories with `drive park`, then navigate via interactive TUI with keyboard shortcuts (↑/↓ to browse, Enter to select, `d` to delete, Esc to cancel)
@@ -10,45 +12,22 @@ A terminal utility to bookmark and quickly navigate to frequently used directori
 
 ## Installation
 
-### Prerequisites
+Install globally via npm:
 
-- Node.js 20+ (recommended, but may work with Node.js 18+)
+```bash
+npm install -g @brechtknecht/drive
+```
 
-### Install
+**Important**: After installation, you'll see instructions to add a shell wrapper to your `~/.bashrc` or `~/.zshrc`. This is required for the `cd` functionality to work. Copy the `source` line shown in the postinstall output and add it to your shell config, then reload your shell.
 
-1. Clone or download this repository
-2. Navigate to the drive directory:
-   ```bash
-   cd /path/to/drive
-   ```
+Example for zsh:
+```bash
+# Add to ~/.zshrc:
+source /path/to/global/node_modules/@brechtknecht/drive/drive.sh
 
-3. Install dependencies and build:
-   ```bash
-   npm install
-   npm run build
-   ```
-
-4. Link the CLI globally:
-   ```bash
-   npm link
-   ```
-
-5. **Important**: Add the shell wrapper to your shell config:
-
-   For **bash**, add to `~/.bashrc`:
-   ```bash
-   source /Users/felixtesche/Downloads/Documents/github.nosync/drive/drive.sh
-   ```
-
-   For **zsh**, add to `~/.zshrc`:
-   ```bash
-   source /Users/felixtesche/Downloads/Documents/github.nosync/drive/drive.sh
-   ```
-
-6. Reload your shell or run:
-   ```bash
-   source ~/.bashrc  # or source ~/.zshrc
-   ```
+# Then reload:
+source ~/.zshrc
+```
 
 ## Usage
 
@@ -159,9 +138,9 @@ The config file is a simple JSON array of absolute paths:
 ## Uninstall
 
 1. Remove the source line from your shell config (`~/.bashrc` or `~/.zshrc`)
-2. Unlink the CLI:
+2. Uninstall the package:
    ```bash
-   npm unlink -g drive-cli
+   npm uninstall -g @brechtknecht/drive
    ```
 3. Optionally, remove your bookmarks:
    ```bash
@@ -188,4 +167,4 @@ npm run build
 
 ## License
 
-ISC
+MIT

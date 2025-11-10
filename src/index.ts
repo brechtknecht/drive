@@ -8,7 +8,6 @@ import { promisify } from 'util';
 import path from 'path';
 import os from 'os';
 import fs from 'fs';
-import tty from 'tty';
 
 const execAsync = promisify(exec);
 const config = new ConfigManager();
@@ -117,8 +116,9 @@ program
       }
 
       try {
-        // If stdout is redirected (not a TTY), we need to use /dev/tty for interactive I/O
-        let promptOptions: any = {
+        // Create custom select prompt with key handlers
+        const SelectPrompt = (Enquirer as any).Select;
+        const prompt = new SelectPrompt({
           name: 'path',
           message: 'Select a directory:',
           choices: paths.map(p => ({
@@ -126,21 +126,7 @@ program
             message: p,
             hint: path.basename(p)
           })),
-        };
-
-        // When stdout is redirected, use /dev/tty directly for both input and output
-        if (!process.stdout.isTTY) {
-          const ttyFd = fs.openSync('/dev/tty', 'r+');
-          const ttyReadStream = new tty.ReadStream(ttyFd);
-          const ttyWriteStream = new tty.WriteStream(ttyFd);
-
-          promptOptions.stdin = ttyReadStream;
-          promptOptions.stdout = ttyWriteStream;
-        }
-
-        // Create custom select prompt with key handlers
-        const SelectPrompt = (Enquirer as any).Select;
-        const prompt = new SelectPrompt(promptOptions);
+        });
 
         // Add footer with keyboard shortcuts
         prompt.footer = () => {
@@ -189,7 +175,13 @@ program
             }
           } else {
             // Output path for shell function to cd
+            // Write to temp file that shell wrapper will read
+            const tmpPath = process.env.DRIVE_OUTPUT_FILE || path.join(os.tmpdir(), `drive-output-${process.pid}`);
+            fs.writeFileSync(tmpPath, selectedPath);
+
+            // Also print to stdout for visibility
             console.log(selectedPath);
+
             keepRunning = false;
           }
         }

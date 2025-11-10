@@ -2,8 +2,10 @@
 # Shell wrapper for drive CLI to enable directory changing
 
 drive() {
-  # Check if this is a subcommand that doesn't need cd
-  if [[ "$1" == "park" ]] || [[ "$1" == "list" ]] || [[ "$1" == "unpark" ]] || [[ "$1" == "--help" ]] || [[ "$1" == "-h" ]] || [[ "$1" == "--version" ]] || [[ "$1" == "-V" ]]; then
+  local first_arg="$1"
+
+  # Check if this is a known subcommand that doesn't need special handling
+  if [[ "$first_arg" == "park" ]] || [[ "$first_arg" == "list" ]] || [[ "$first_arg" == "unpark" ]] || [[ "$first_arg" == "home" ]] || [[ "$first_arg" == "--help" ]] || [[ "$first_arg" == "-h" ]] || [[ "$first_arg" == "--version" ]] || [[ "$first_arg" == "-V" ]]; then
     command drive "$@"
     return $?
   fi
@@ -14,18 +16,56 @@ drive() {
     return $?
   fi
 
-  # For the selector (no args or other args), capture output and cd
-  local output
-  output=$(command drive "$@")
+  # If arguments are provided and not a known command, treat as command to execute after selection
+  if [[ -n "$1" ]]; then
+    local command_to_run="$@"
+    local tmpfile="/tmp/drive-output-$$"
+
+    # Set env vars so CLI knows where to write and what command will run
+    export DRIVE_OUTPUT_FILE="$tmpfile"
+    export DRIVE_COMMAND="$command_to_run"
+
+    # Run selector - CLI will write output to temp file
+    command drive
+    local exit_code=$?
+
+    unset DRIVE_OUTPUT_FILE
+    unset DRIVE_COMMAND
+
+    # Read the output from temp file
+    local output=""
+    if [ -f "$tmpfile" ]; then
+      output=$(cat "$tmpfile")
+      rm -f "$tmpfile"
+    fi
+
+    if [ $exit_code -eq 0 ] && [ -n "$output" ] && [ -d "$output" ]; then
+      cd "$output" && eval "$command_to_run"
+      return $?
+    else
+      return $exit_code
+    fi
+  fi
+
+  # Default: no args, just show selector and cd
+  local tmpfile="/tmp/drive-output-$$"
+  export DRIVE_OUTPUT_FILE="$tmpfile"
+
+  command drive
   local exit_code=$?
+
+  unset DRIVE_OUTPUT_FILE
+
+  # Read the output from temp file
+  local output=""
+  if [ -f "$tmpfile" ]; then
+    output=$(cat "$tmpfile")
+    rm -f "$tmpfile"
+  fi
 
   if [ $exit_code -eq 0 ] && [ -n "$output" ] && [ -d "$output" ]; then
     cd "$output" || return 1
   else
-    # If there was output but not a valid directory, print it
-    if [ -n "$output" ]; then
-      echo "$output"
-    fi
     return $exit_code
   fi
 }

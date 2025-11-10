@@ -7,6 +7,7 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 import path from 'path';
 import os from 'os';
+import fs from 'fs';
 
 const execAsync = promisify(exec);
 const config = new ConfigManager();
@@ -115,11 +116,22 @@ program
       }
 
       try {
+        // Check if a command will be executed after selection
+        const commandToRun = process.env.DRIVE_COMMAND;
+
+        // Build message based on whether a command is provided
+        let message = 'Select a directory:';
+        if (commandToRun) {
+          message = `Select a directory to run \x1b[36m${commandToRun}\x1b[0m in:`;
+        } else if (options.editor) {
+          message = 'Select a directory to open in editor:';
+        }
+
         // Create custom select prompt with key handlers
         const SelectPrompt = (Enquirer as any).Select;
         const prompt = new SelectPrompt({
           name: 'path',
-          message: 'Select a directory:',
+          message: message,
           choices: paths.map(p => ({
             name: p,
             message: p,
@@ -129,6 +141,9 @@ program
 
         // Add footer with keyboard shortcuts
         prompt.footer = () => {
+          if (commandToRun) {
+            return '\n  ↑/↓ Navigate • Enter Select & Run • d Delete • Esc Cancel';
+          }
           return '\n  ↑/↓ Navigate • Enter Select • d Delete • Esc Cancel';
         };
 
@@ -174,7 +189,13 @@ program
             }
           } else {
             // Output path for shell function to cd
+            // Write to temp file that shell wrapper will read
+            const tmpPath = process.env.DRIVE_OUTPUT_FILE || path.join(os.tmpdir(), `drive-output-${process.pid}`);
+            fs.writeFileSync(tmpPath, selectedPath);
+
+            // Also print to stdout for visibility
             console.log(selectedPath);
+
             keepRunning = false;
           }
         }

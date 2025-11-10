@@ -3,7 +3,7 @@
 
 drive() {
   # Check if this is a subcommand that doesn't need cd
-  if [[ "$1" == "park" ]] || [[ "$1" == "list" ]] || [[ "$1" == "unpark" ]] || [[ "$1" == "--help" ]] || [[ "$1" == "-h" ]] || [[ "$1" == "--version" ]] || [[ "$1" == "-V" ]]; then
+  if [[ "$1" == "park" ]] || [[ "$1" == "list" ]] || [[ "$1" == "unpark" ]] || [[ "$1" == "setup" ]] || [[ "$1" == "--help" ]] || [[ "$1" == "-h" ]] || [[ "$1" == "--version" ]] || [[ "$1" == "-V" ]]; then
     command drive "$@"
     return $?
   fi

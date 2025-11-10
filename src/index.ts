@@ -7,6 +7,9 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 import path from 'path';
 import os from 'os';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
 const execAsync = promisify(exec);
 const config = new ConfigManager();
@@ -97,6 +100,75 @@ program
       } else {
         console.error(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }
+    }
+  });
+
+// drive setup - Configure shell wrapper automatically
+program
+  .command('setup')
+  .description('Automatically configure shell wrapper for cd functionality')
+  .action(async () => {
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = dirname(__filename);
+    const shellWrapperPath = path.join(__dirname, '..', 'drive.sh');
+
+    // Check if shell wrapper exists
+    if (!fs.existsSync(shellWrapperPath)) {
+      console.error(`Error: Shell wrapper not found at ${shellWrapperPath}`);
+      process.exit(1);
+    }
+
+    const shell = process.env.SHELL || '';
+    let configFile: string;
+    let shellName: string;
+
+    if (shell.includes('zsh')) {
+      configFile = path.join(os.homedir(), '.zshrc');
+      shellName = 'zsh';
+    } else if (shell.includes('bash')) {
+      configFile = path.join(os.homedir(), '.bashrc');
+      shellName = 'bash';
+    } else {
+      console.error('Error: Could not detect shell type. Supported shells: bash, zsh');
+      console.log(`\nPlease manually add this line to your shell config file:`);
+      console.log(`  source ${shellWrapperPath}`);
+      process.exit(1);
+    }
+
+    const sourceLine = `source ${shellWrapperPath}`;
+
+    // Check if config file exists
+    if (!fs.existsSync(configFile)) {
+      console.log(`Creating ${configFile}...`);
+      fs.writeFileSync(configFile, '', 'utf-8');
+    }
+
+    // Read existing config
+    const configContent = fs.readFileSync(configFile, 'utf-8');
+
+    // Check if already configured
+    if (configContent.includes(sourceLine)) {
+      console.log(`✓ Shell wrapper already configured in ${configFile}`);
+      console.log(`\nTo activate, reload your shell:`);
+      console.log(`  source ${configFile}`);
+      return;
+    }
+
+    // Add the source line
+    const newContent = configContent.trim() + `\n\n# Drive CLI - Directory navigation tool\n${sourceLine}\n`;
+
+    try {
+      fs.writeFileSync(configFile, newContent, 'utf-8');
+      console.log(`✓ Successfully added drive shell wrapper to ${configFile}`);
+      console.log(`\nTo activate, reload your shell:`);
+      console.log(`  source ${configFile}`);
+      console.log(`\nOr restart your terminal.`);
+    } catch (error) {
+      console.error(`Error: Failed to write to ${configFile}`);
+      console.error(`${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.log(`\nPlease manually add this line to ${configFile}:`);
+      console.log(`  ${sourceLine}`);
+      process.exit(1);
     }
   });
 

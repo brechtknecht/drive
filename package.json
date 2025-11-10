@@ -1,0 +1,33 @@
+{
+  "name": "drive-cli",
+  "version": "1.0.0",
+  "description": "A terminal utility to bookmark and quickly navigate to frequently used directories",
+  "type": "module",
+  "main": "./dist/index.js",
+  "bin": {
+    "drive": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "cli",
+    "navigation",
+    "directory",
+    "bookmark",
+    "terminal"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^24.10.0",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "commander": "^14.0.2",
+    "enquirer": "^2.4.1"
+  }
+}

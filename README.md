@@ -4,12 +4,9 @@ A terminal utility to bookmark and quickly navigate to frequently used directori
 
 ## Features
 
-- **Park directories**: Bookmark any directory with a simple command
-- **Interactive TUI**: Navigate through your bookmarked directories with an intuitive keyboard-driven interface
-- **Quick navigation**: Jump to bookmarked directories instantly
-- **Command execution**: Run any command in a selected directory
-- **Editor integration**: Open bookmarked directories in your favorite editor
-- **Persistent storage**: Your bookmarks are saved in `~/.config/drive/paths.json`
+- **Bookmark & Select**: Park frequently-used directories with `drive park`, then navigate via interactive TUI with keyboard shortcuts (↑/↓ to browse, Enter to select, `d` to delete, Esc to cancel)
+- **Flexible Actions**: Jump to directories (`drive`), execute commands in them (`drive npm test`), open in editor (`drive -e`), or quickly go home (`drive home`) - all from one selector interface
+- **Persistent & Reliable**: Bookmarks stored in `~/.config/drive/paths.json`, automatically filters invalid paths, works via shell wrapper for seamless directory changing
 
 ## Installation
 

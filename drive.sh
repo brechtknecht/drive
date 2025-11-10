@@ -2,10 +2,8 @@
 # Shell wrapper for drive CLI to enable directory changing
 
 drive() {
-  local first_arg="$1"
-
-  # Check if this is a known subcommand that doesn't need special handling
-  if [[ "$first_arg" == "park" ]] || [[ "$first_arg" == "list" ]] || [[ "$first_arg" == "unpark" ]] || [[ "$first_arg" == "home" ]] || [[ "$first_arg" == "--help" ]] || [[ "$first_arg" == "-h" ]] || [[ "$first_arg" == "--version" ]] || [[ "$first_arg" == "-V" ]]; then
+  # Check if this is a subcommand that doesn't need cd
+  if [[ "$1" == "park" ]] || [[ "$1" == "list" ]] || [[ "$1" == "unpark" ]] || [[ "$1" == "setup" ]] || [[ "$1" == "--help" ]] || [[ "$1" == "-h" ]] || [[ "$1" == "--version" ]] || [[ "$1" == "-V" ]]; then
     command drive "$@"
     return $?
   fi
